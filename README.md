@@ -23,3 +23,13 @@ Add to your **composer.json**, e.g.
   }
 }
 ```
+
+## Examples
+
+```
+// See a link with title and URL as specified in the element selected by "#content #footer".
+$I->seeLinkInSelector("Facebook", "https://www.facebook.com/", "#content #footer");
+
+// See the element selected by "#footer .icon-r" has the float:right style applied.
+$I->seeElementHasStyle("#footer .icon-r", "float", "right");
+```
