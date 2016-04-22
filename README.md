@@ -2,8 +2,8 @@
 
 A handful of generic helper and utility methods for Codeception.
 
-* **seeElementHasStyle** - see an element has been applied a style. Allows you to check a single element has a CSS style assigned, e.g. you can check that ".icon-r" class is floated right.
-* **dontSeeElementHasStyle** -  see element has not been applied a style.
+* **seeElementHasStyle** - see an element has been applied a style. Allows you to check a single element has a CSS style assigned, e.g. you can check that ".icon-r" class is floated right. Requires WebDriver.
+* **dontSeeElementHasStyle** -  see element has not been applied a style. Requires WebDriver.
 
 ## Installing
 
