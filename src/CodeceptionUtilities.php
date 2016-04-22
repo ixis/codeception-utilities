@@ -2,11 +2,45 @@
 
 namespace Codeception\Module;
 
+use Codeception\Lib\Interfaces\Web as WebInterface;
 use Codeception\Module;
 use Codeception\SuiteManager;
+use Codeception\Util\Locator;
 
 class CodeceptionUtilities extends Module
 {
+    /**
+     * Looks for a link in a particular CSS or XPath selector.
+     *
+     * @param string $text
+     *   Text to look for.
+     * @param string $link
+     *   URL the text should link to.
+     * @param string $cssOrXpath
+     *   The selector in which to look for the link.
+     */
+    public function seeLinkInSelector($text, $link, $cssOrXpath)
+    {
+        $moduleName = SuiteManager::$actions['seeInTitle'];
+        /** @var WebInterface $module */
+        $module = $this->getModule($moduleName);
+
+        if ($link) {
+            if (Locator::isCSS($cssOrXpath)) {
+                $link_selector = sprintf("%s a[href*='%s']", $cssOrXpath, $link);
+            } else {
+                $link_selector = sprintf("%s//a[contains(@href,'%s')]", $cssOrXpath, $link);
+            }
+        } else {
+            if (Locator::isCSS($cssOrXpath)) {
+                $link_selector = sprintf("%s a", $cssOrXpath);
+            } else {
+                $link_selector = sprintf("%s//a", $cssOrXpath);
+            }
+        }
+        $module->see($text, $link_selector);
+    }
+
     /**
      * See element has been applied a style.
      *
