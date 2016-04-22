@@ -1,6 +1,6 @@
 {
     "name": "ixis/codeception-utilities",
-    "description": "A Codeception module...",
+    "description": "Generic helper and utility methods for Codeception.",
     "license": "MIT",
     "authors": [
         {
