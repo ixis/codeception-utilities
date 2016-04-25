@@ -53,10 +53,12 @@ class CodeceptionUtilities extends Module
      *   The style name e.g. font-weight, float
      * @param string $value
      *   The value to check e.g. bold, right
+     * @param string $pseudo
+     *   The pseudo selector to retrieve the style for e.g. ::before, :hover
      */
-    public function seeElementHasStyle($selector, $style, $value)
+    public function seeElementHasStyle($selector, $style, $value, $pseudo = null)
     {
-        $this->assert($this->proceedSeeElementHasStyle($selector, $style, $value));
+        $this->assert($this->proceedSeeElementHasStyle($selector, $style, $value, $pseudo));
     }
 
     /**
@@ -68,10 +70,12 @@ class CodeceptionUtilities extends Module
      *   The style name e.g. font-weight, float
      * @param string $value
      *   The value to check e.g. bold, right
+     * @param string $pseudo
+     *   The pseudo selector to retrieve the style for e.g. ::before, :hover
      */
-    public function dontSeeElementHasStyle($selector, $style, $value)
+    public function dontSeeElementHasStyle($selector, $style, $value, $pseudo = null)
     {
-        $this->assertNot($this->proceedSeeElementHasStyle($selector, $style, $value));
+        $this->assertNot($this->proceedSeeElementHasStyle($selector, $style, $value, $pseudo));
     }
 
     /**
@@ -83,22 +87,50 @@ class CodeceptionUtilities extends Module
      *   The style name e.g. font-weight, float
      * @param string $value
      *   The value to check e.g. bold, right
+     * @param string $pseudo
+     *   The pseudo selector to retrieve the style for e.g. ::before, :hover
      *
      * @return array
      *
      * @throws \LogicException
      *   If attempting to call function when WebDriver not in use.
      */
-    protected function proceedSeeElementHasStyle($selector, $style, $value)
+    protected function proceedSeeElementHasStyle($selector, $style, $value, $pseudo = null)
+    {
+        $computedvalue = $this->grabElementStyle($selector, $style, $pseudo);
+
+        return array("Equals", $value, $computedvalue);
+    }
+
+    /**
+     * Get a style value from an element.
+     *
+     * @param string $selector
+     *   A CSS (only) selector to identify the element.
+     * @param string $style
+     *   The style name e.g. font-weight, float
+     * @param string $pseudo
+     *   The pseudo selector to retrieve the style for e.g. ::before, :hover
+     *
+     * @return mixed
+     *
+     * @throws \LogicException
+     *   If attempting to call function when WebDriver not in use.
+     */
+    public function grabElementStyle($selector, $style, $pseudo = null)
     {
         if ($this->getBrowserName() !== 'WebDriver') {
             throw new \LogicException("Computed styles only available for inspection when using WebDriver");
         }
 
-        $computedvalue = $this->getModule("WebDriver")
-          ->executeJs("return window.getComputedStyle(document.querySelector('$selector')).$style");
+        $js = sprintf(
+          "return window.getComputedStyle(document.querySelector('%s')%s)['%s']",
+          $selector,
+          $pseudo ? ", '$pseudo'" : "",
+          $style
+        );
 
-        return array("Equals", $value, $computedvalue);
+        return $this->getModule("WebDriver")->executeJs($js);
     }
 
     /**
@@ -110,12 +142,14 @@ class CodeceptionUtilities extends Module
      */
     public function getBrowserName()
     {
-        if (SuiteManager::hasModule('PhpBrowser')) {
+        if ($this->hasModule("PhpBrowser")) {
             return 'PhpBrowser';
-        } elseif (SuiteManager::hasModule('WebDriver')) {
-            return 'WebDriver';
-        } else {
-            return null;
         }
+
+        if ($this->hasModule('WebDriver')) {
+            return 'WebDriver';
+        }
+
+        return null;
     }
 }
