@@ -32,8 +32,7 @@ class CodeceptionCkEditorUtilities extends Module
      * @see http://docs.ckeditor.com/#!/api/CKEDITOR.editor-method-getData
      *
      * @param string $instance_id
-     *   A CSS (only) selector to identify the CKEditor element. The element's
-     *   id must be the CKEDITOR instance id.
+     *   The CKEditor instance id.
      *
      * @return string
      *   The CKEditor data (raw HTML).
