@@ -31,10 +31,12 @@ Add to your **composer.json**, e.g.
 
 ## Configuring
 
+```
 modules:
     enabled:
         - CodeceptionUtilities
         - CodeceptionCkEditorUtilities
+```
 
 ## Examples
 
