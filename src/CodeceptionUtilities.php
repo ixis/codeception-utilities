@@ -25,20 +25,7 @@ class CodeceptionUtilities extends Module
         /** @var WebInterface $module */
         $module = $this->getModule($moduleName);
 
-        if ($link) {
-            if (Locator::isCSS($cssOrXpath)) {
-                $link_selector = sprintf("%s a[href*='%s']", $cssOrXpath, $link);
-            } else {
-                $link_selector = sprintf("%s//a[contains(@href,'%s')]", $cssOrXpath, $link);
-            }
-        } else {
-            if (Locator::isCSS($cssOrXpath)) {
-                $link_selector = sprintf("%s a", $cssOrXpath);
-            } else {
-                $link_selector = sprintf("%s//a", $cssOrXpath);
-            }
-        }
-        $module->see($text, $link_selector);
+        $module->see($text, $this->getLinkSelector($link, $cssOrXpath));
     }
 
     /**
@@ -57,6 +44,19 @@ class CodeceptionUtilities extends Module
         /** @var WebInterface $module */
         $module = $this->getModule($moduleName);
 
+        $module->dontSee($text, $this->getLinkSelector($link, $cssOrXpath));
+    }
+
+    /**
+     * Helper method to calculate the correct link selector.
+     *
+     * @param string $link
+     * @param string $cssOrXpath
+     *
+     * @return string
+     */
+    protected function getLinkSelector($link, $cssOrXpath)
+    {
         if ($link) {
             if (Locator::isCSS($cssOrXpath)) {
                 $link_selector = sprintf("%s a[href*='%s']", $cssOrXpath, $link);
@@ -70,7 +70,8 @@ class CodeceptionUtilities extends Module
                 $link_selector = sprintf("%s//a", $cssOrXpath);
             }
         }
-        $module->dontSee($text, $link_selector);
+
+        return $link_selector;
     }
 
     /**
