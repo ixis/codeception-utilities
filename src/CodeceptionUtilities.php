@@ -2,13 +2,14 @@
 
 namespace Codeception\Module;
 
-use Codeception\Lib\Interfaces\Web as WebInterface;
 use Codeception\Module;
-use Codeception\SuiteManager;
 use Codeception\Util\Locator;
+use Ixis\Codeception\Util\BrowserTrait;
 
 class CodeceptionUtilities extends Module
 {
+    use BrowserTrait;
+
     /**
      * Looks for a link in a particular CSS or XPath selector.
      *
@@ -156,30 +157,5 @@ class CodeceptionUtilities extends Module
         );
 
         return $this->getModule("WebDriver")->executeJs($js);
-    }
-
-    /**
-     * Work out which browser module is in use.
-     *
-     * @return null|string
-     *   Returns PhpBrowser if that module is detected. Otherwise, returns WebDriver. If neither of these are detected,
-     *   return null.
-     */
-    public function getBrowserModuleName()
-    {
-        if (isset(SuiteManager::$actions['seeInTitle'])) {
-            return SuiteManager::$actions['seeInTitle'];
-        }
-
-        return null;
-    }
-
-    /**
-     * @return WebInterface
-     * @throws \Codeception\Exception\Module
-     */
-    protected function getBrowserModule()
-    {
-        return $this->getModule($this->getBrowserModuleName());
     }
 }
