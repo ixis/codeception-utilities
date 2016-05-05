@@ -158,4 +158,61 @@ class CodeceptionUtilities extends Module
 
         return $this->getModule("WebDriver")->executeJs($js);
     }
+
+    /**
+     * Helper function for seeRegexInSource() and dontSeeRegexInSource().
+     *
+     * Switch behaviour based on whether we're using PhpBrowser or WebDriver because they both handle acquisition of
+     * page content slightly differently.
+     *
+     * @param string $string
+     *   The regular expression to check for.
+     *
+     * @return bool
+     *   Returns true if string found.
+     */
+    protected function proceedSeeRegexInSource($string)
+    {
+        $moduleName = $this->getBrowserModuleName();
+
+        switch ($moduleName) {
+            case 'PhpBrowser':
+            default:
+                $session = $this->getModule('PhpBrowser')->client;
+                $content = $session->getResponse()->getContent();
+                break;
+
+            case 'WebDriver':
+                /** @var WebDriver $module */
+                $module = $this->getModule($moduleName);
+                $content = $module->webDriver->getPageSource();
+                break;
+        }
+
+        return array("True", preg_match($string, $content) === 1);
+    }
+
+    /**
+     * Perform a simple preg_match() to check for regex $string in a page's
+     * source.
+     *
+     * @param $string
+     *   The regex string to check for.
+     */
+    public function seeRegexInSource($string)
+    {
+        $this->assert($this->proceedSeeRegexInSource($string));
+    }
+
+    /**
+     * Perform a simple preg_match to check that regex $string does not
+     * exist in a page's source.
+     *
+     * @param $string
+     *   The regex string to check for.
+     */
+    public function dontSeeRegexInSource($string)
+    {
+        $this->assertNot($this->proceedSeeRegexInSource($string));
+    }
 }
