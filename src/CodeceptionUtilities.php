@@ -21,9 +21,8 @@ class CodeceptionUtilities extends Module
      */
     public function seeLinkInSelector($text, $link, $cssOrXpath)
     {
-        $moduleName = SuiteManager::$actions['seeInTitle'];
         /** @var WebInterface $module */
-        $module = $this->getModule($moduleName);
+        $module = $this->getModule($this->getBrowserModuleName());
 
         $module->see($text, $this->getLinkSelector($link, $cssOrXpath));
     }
@@ -40,9 +39,8 @@ class CodeceptionUtilities extends Module
      */
     public function dontSeeLinkInSelector($text, $link, $cssOrXpath)
     {
-        $moduleName = SuiteManager::$actions['seeInTitle'];
         /** @var WebInterface $module */
-        $module = $this->getModule($moduleName);
+        $module = $this->getModule($this->getBrowserModuleName());
 
         $module->dontSee($text, $this->getLinkSelector($link, $cssOrXpath));
     }
@@ -152,7 +150,7 @@ class CodeceptionUtilities extends Module
      */
     public function grabElementStyle($selector, $style, $pseudo = null)
     {
-        if ($this->getBrowserName() !== 'WebDriver') {
+        if ($this->getBrowserModuleName() !== 'WebDriver') {
             throw new \LogicException("Computed styles only available for inspection when using WebDriver");
         }
 
@@ -173,14 +171,10 @@ class CodeceptionUtilities extends Module
      *   Returns PhpBrowser if that module is detected. Otherwise, returns WebDriver. If neither of these are detected,
      *   return null.
      */
-    public function getBrowserName()
+    public function getBrowserModuleName()
     {
-        if ($this->hasModule("PhpBrowser")) {
-            return 'PhpBrowser';
-        }
-
-        if ($this->hasModule('WebDriver')) {
-            return 'WebDriver';
+        if (isset(SuiteManager::$actions['seeInTitle'])) {
+            return SuiteManager::$actions['seeInTitle'];
         }
 
         return null;
