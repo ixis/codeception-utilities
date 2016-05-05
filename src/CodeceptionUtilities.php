@@ -21,10 +21,7 @@ class CodeceptionUtilities extends Module
      */
     public function seeLinkInSelector($text, $link, $cssOrXpath)
     {
-        /** @var WebInterface $module */
-        $module = $this->getModule($this->getBrowserModuleName());
-
-        $module->see($text, $this->getLinkSelector($link, $cssOrXpath));
+        $this->getBrowserModule()->see($text, $this->getLinkSelector($link, $cssOrXpath));
     }
 
     /**
@@ -39,10 +36,7 @@ class CodeceptionUtilities extends Module
      */
     public function dontSeeLinkInSelector($text, $link, $cssOrXpath)
     {
-        /** @var WebInterface $module */
-        $module = $this->getModule($this->getBrowserModuleName());
-
-        $module->dontSee($text, $this->getLinkSelector($link, $cssOrXpath));
+        $this->getBrowserModule()->dontSee($text, $this->getLinkSelector($link, $cssOrXpath));
     }
 
     /**
@@ -178,5 +172,14 @@ class CodeceptionUtilities extends Module
         }
 
         return null;
+    }
+
+    /**
+     * @return WebInterface
+     * @throws \Codeception\Exception\Module
+     */
+    protected function getBrowserModule()
+    {
+        return $this->getModule($this->getBrowserModuleName());
     }
 }
