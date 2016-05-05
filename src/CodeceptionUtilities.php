@@ -25,6 +25,38 @@ class CodeceptionUtilities extends Module
         /** @var WebInterface $module */
         $module = $this->getModule($moduleName);
 
+        $module->see($text, $this->getLinkSelector($link, $cssOrXpath));
+    }
+
+    /**
+     * Checks that a link does not appear in a particular CSS or XPath selector.
+     *
+     * @param string $text
+     *   Text to ensure doesn't exist.
+     * @param string $link
+     *   URL the text should not link to.
+     * @param string $cssOrXpath
+     *   The selector in which to look for the lack of link.
+     */
+    public function dontSeeLinkInSelector($text, $link, $cssOrXpath)
+    {
+        $moduleName = SuiteManager::$actions['seeInTitle'];
+        /** @var WebInterface $module */
+        $module = $this->getModule($moduleName);
+
+        $module->dontSee($text, $this->getLinkSelector($link, $cssOrXpath));
+    }
+
+    /**
+     * Helper method to calculate the correct link selector.
+     *
+     * @param string $link
+     * @param string $cssOrXpath
+     *
+     * @return string
+     */
+    protected function getLinkSelector($link, $cssOrXpath)
+    {
         if ($link) {
             if (Locator::isCSS($cssOrXpath)) {
                 $link_selector = sprintf("%s a[href*='%s']", $cssOrXpath, $link);
@@ -38,7 +70,8 @@ class CodeceptionUtilities extends Module
                 $link_selector = sprintf("%s//a", $cssOrXpath);
             }
         }
-        $module->see($text, $link_selector);
+
+        return $link_selector;
     }
 
     /**
